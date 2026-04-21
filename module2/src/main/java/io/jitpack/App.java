@@ -43,7 +43,10 @@ public class App
         }
         // Basic sanitization: escape single quotes to reduce SQL injection risk.
         //return input.replace("'", "''");
-        return input.replace(";", ""); // Remove semicolons to prevent multiple statements
+        if (input.contains("'")) {
+            throw new IllegalArgumentException("Input contains invalid characters.");
+        }
+        return input;
     }
 
     /**
