@@ -1,5 +1,12 @@
 package io.jitpack;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Scanner;
+
 /**
  * Hello world!
  *
@@ -11,5 +18,36 @@ public class App
     public static void main( String[] args )
     {
         System.out.println( GREETING );
+        try (Scanner scanner = new Scanner(System.in);
+             Connection conn = getConnection()) {
+            System.out.print("Enter a user name to search: ");
+            String userInput = scanner.nextLine();
+            String myName = findUserByName(conn, userInput);
+            System.out.println("Found user: " + myName);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static Connection getConnection() throws SQLException {
+        String url = "jdbc:postgresql://localhost:5432/mydb";
+        String user = System.getProperty("DB_USER", "postgres");
+        String password = System.getProperty("DB_PASSWORD", "password");
+        return DriverManager.getConnection(url, user, password);
+    }
+
+    /**
+     * Sample SQL injection vulnerable method for testing.
+     * This intentionally concatenates raw user input into SQL.
+     */
+    public static String findUserByName(Connection connection, String userInput) throws SQLException {
+        String sql = "SELECT id, name FROM mytable WHERE name = '" + userInput + "'";
+        try (Statement statement = connection.createStatement();
+             ResultSet resultSet = statement.executeQuery(sql)) {
+            if (resultSet.next()) {
+                return resultSet.getString("name");
+            }
+        }
+        return null;
     }
 }
