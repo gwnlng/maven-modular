@@ -1,5 +1,6 @@
-package io.jitpack;
+package io.jitpack.validator;
 
+import io.jitpack.util.SqlSanitizer;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -22,7 +23,7 @@ public class App
              Connection conn = getConnection()) {
             System.out.print("Enter a user name to search: ");
             String userInput = scanner.nextLine();
-            String sanitizedInput = sanitizeUserInput(userInput);
+            String sanitizedInput = SqlSanitizer.sanitizeUserInput(userInput);
             String myName = findUserByName(conn, sanitizedInput);
             System.out.println("Found user: " + myName);
         } catch (SQLException e) {
@@ -35,18 +36,6 @@ public class App
         String user = System.getProperty("DB_USER", "postgres");
         String password = System.getProperty("DB_PASSWORD", "password");
         return DriverManager.getConnection(url, user, password);
-    }
-
-    public static String sanitizeUserInput(String input) {
-        if (input == null) {
-            return null;
-        }
-        // Basic sanitization: escape single quotes to reduce SQL injection risk.
-        //return input.replace("'", "''");
-        if (input.contains("'")) {
-            throw new IllegalArgumentException("Input contains invalid characters.");
-        }
-        return input;
     }
 
     /**
