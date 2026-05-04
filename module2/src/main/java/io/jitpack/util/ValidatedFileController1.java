@@ -35,10 +35,7 @@ public class ValidatedFileController1 {
         PathTraverseHelper pathTraverseHelper = new PathTraverseHelper();
         pathTraverseHelper.initPathNameRule("[a-z]|[A-Z]:(\\[^\\/&?\n]+)\\?");
         pathTraverseHelper.initPathStarter("/upload");
-        boolean result = pathTraverseHelper.validate(path);
-        if (!result) {
-            throw new IOException("Invalid path");
-        }
+        pathTraverseHelper.validate(path);
 
         byte[] bytes = Files.readAllBytes(target);
         return ResponseEntity.ok()
@@ -60,10 +57,7 @@ public class ValidatedFileController1 {
         PathTraverseHelper pathTraverseHelper = new PathTraverseHelper();
         pathTraverseHelper.initPathNameRule("[a-z]|[A-Z]:(\\[^\\/&?\n]+)\\?");
         pathTraverseHelper.initPathStarter("/upload");
-        boolean result = pathTraverseHelper.validate(path);
-        if (!result) {
-            throw new IOException("Invalid path");
-        }
+        pathTraverseHelper.validate(path);
 
         byte[] bytes = Files.readAllBytes(target);
         return ResponseEntity.ok()
@@ -77,9 +71,6 @@ public class ValidatedFileController1 {
         PathTraverseHelper pathTraverseHelper = new PathTraverseHelper();
         pathTraverseHelper.initPathNameRule("[a-z]|[A-Z]:(\\[^\\/&?\n]+)\\?");
         pathTraverseHelper.initPathStarter("/upload");
-        boolean result = pathTraverseHelper.validate(path);
-        if (!result) {
-            throw new IOException("Invalid path");
-        }
+        pathTraverseHelper.validate(path);
     }
 }

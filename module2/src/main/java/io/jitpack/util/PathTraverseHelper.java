@@ -40,29 +40,31 @@ public class PathTraverseHelper {
         this.pathStarter = normalizedStarter;
     }
 
-    public boolean validate(String path) throws IOException {
+    public void validate(String path) throws IOException {
         if (path == null || path.isBlank()) {
-            return false;
+            throw new IOException("Path is null or blank");
         }
 
         if (path.contains("\0")) {
-            return false;
+            throw new IOException("Path contains null byte");
         }
 
         if (pathNameRule != null && !pathNameRule.matcher(path).matches()) {
-            return false;
+            throw new IOException("Path does not match name rule");
         }
 
         Path requestedPath = Paths.get(path).normalize();
         if (containsPathTraversal(requestedPath)) {
-            return false;
+            throw new IOException("Path contains path traversal");
         }
 
         if (pathStarter != null && !startsWithStarter(requestedPath, pathStarter)) {
-            return false;
+            throw new IOException("Path does not start with required prefix");
         }
 
-        return Files.exists(requestedPath) && Files.isRegularFile(requestedPath);
+        if (!Files.exists(requestedPath) || !Files.isRegularFile(requestedPath)) {
+            throw new IOException("Path does not exist or is not a regular file");
+        }
     }
 
     private boolean containsPathTraversal(Path normalizedPath) {
