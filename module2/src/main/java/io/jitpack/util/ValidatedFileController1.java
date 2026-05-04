@@ -57,7 +57,7 @@ public class ValidatedFileController1 {
                 .body(new ByteArrayResource(bytes));
     }
 
-    private void validateFileName(String path) throws  IOException {
+    public void validateFileName(String path) throws IOException {
         PathTraverseHelper pathTraverseHelper = new PathTraverseHelper();
         pathTraverseHelper.initPathNameRule("[a-z]|[A-Z]:(\\[^\\/&?\n]+)\\?");
         pathTraverseHelper.initPathStarter("/upload");

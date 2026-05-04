@@ -1,6 +1,8 @@
 package io.jitpack.validator;
 
 import io.jitpack.util.SqlSanitizer;
+import io.jitpack.util.ValidatedFileController1;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -12,44 +14,56 @@ import java.util.Scanner;
  * Hello world!
  *
  */
-public class App 
-{
-    public static String GREETING = "Hello World!";
-    
-    public static void main( String[] args )
-    {
-        System.out.println( GREETING );
-        try (Scanner scanner = new Scanner(System.in);
-             Connection conn = getConnection()) {
-            System.out.print("Enter a user name to search: ");
-            String userInput = scanner.nextLine();
-            String sanitizedInput = SqlSanitizer.sanitizeUserInput(userInput);
-            String myName = findUserByName(conn, sanitizedInput);
-            System.out.println("Found user: " + myName);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
+public class App {
+  public static String GREETING = "Hello World!";
 
-    public static Connection getConnection() throws SQLException {
-        String url = "jdbc:postgresql://localhost:5432/mydb";
-        String user = System.getProperty("DB_USER", "postgres");
-        String password = System.getProperty("DB_PASSWORD", "password");
-        return DriverManager.getConnection(url, user, password);
-    }
+  public static void main(String[] args) {
+    System.out.println(GREETING);
+    try (Scanner scanner = new Scanner(System.in);
+        Connection conn = getConnection()) {
+      System.out.print("Enter a user name to search: ");
+      String userInput = scanner.nextLine();
+      String sanitizedInput = SqlSanitizer.sanitizeUserInput(userInput);
+      String myName = findUserByName(conn, sanitizedInput);
 
-    /**
-     * Sample SQL injection vulnerable method for testing.
-     * This intentionally concatenates raw user input into SQL.
-     */
-    public static String findUserByName(Connection connection, String userInput) throws SQLException {
-        String sql = "SELECT id, name FROM mytable WHERE name = '" + userInput + "'";
-        try (Statement statement = connection.createStatement();
-             ResultSet resultSet = statement.executeQuery(sql)) {
-            if (resultSet.next()) {
-                return resultSet.getString("name");
-            }
-        }
-        return null;
+      if (myName == null) {
+        System.out.println("User not found: " + userInput);
+        return;
+      }
+
+      System.out.println("Found user: " + myName);
+      System.out.print("Enter the file path to upload to: ");
+      String filePath = scanner.nextLine();
+
+      ValidatedFileController1 controller = new ValidatedFileController1();
+      controller.validateFileName(filePath);
+      System.out.println("validated input path: " + filePath);
+    } catch (IOException e) {
+      System.err.println("Path validation failed: " + e.getMessage());
+    } catch (SQLException e) {
+      e.printStackTrace();
     }
+  }
+
+  public static Connection getConnection() throws SQLException {
+    String url = "jdbc:postgresql://localhost:5432/mydb";
+    String user = System.getProperty("DB_USER", "postgres");
+    String password = System.getProperty("DB_PASSWORD", "password");
+    return DriverManager.getConnection(url, user, password);
+  }
+
+  /**
+   * Sample SQL injection vulnerable method for testing.
+   * This intentionally concatenates raw user input into SQL.
+   */
+  public static String findUserByName(Connection connection, String userInput) throws SQLException {
+    String sql = "SELECT id, name FROM mytable WHERE name = '" + userInput + "'";
+    try (Statement statement = connection.createStatement();
+        ResultSet resultSet = statement.executeQuery(sql)) {
+      if (resultSet.next()) {
+        return resultSet.getString("name");
+      }
+    }
+    return null;
+  }
 }
