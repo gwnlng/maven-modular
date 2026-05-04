@@ -27,12 +27,11 @@ public class ValidatedFileController1 {
     @GetMapping("/get1")
     public ResponseEntity<Resource> readFileGetNE(@RequestParam("path") String path) throws IOException {
         logger.warn("Invalid file path requested: {}", path);
-        validateFileName(path);
         Path target = Path.of(path);
         if (!Files.exists(target) || !Files.isRegularFile(target)) {
             return ResponseEntity.notFound().build();
         }
-
+        validateFileName(path);
         byte[] bytes = Files.readAllBytes(target);
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + target.getFileName() + "\"")
@@ -48,7 +47,7 @@ public class ValidatedFileController1 {
         if (!Files.exists(target) || !Files.isRegularFile(target)) {
             return ResponseEntity.notFound().build();
         }
-
+        validateFileName(path);
         byte[] bytes = Files.readAllBytes(target);
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + target.getFileName() + "\"")
