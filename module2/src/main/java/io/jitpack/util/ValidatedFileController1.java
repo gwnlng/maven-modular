@@ -57,7 +57,7 @@ public class ValidatedFileController1 {
         PathTraverseHelper pathTraverseHelper = new PathTraverseHelper();
         pathTraverseHelper.initPathNameRule("[a-z]|[A-Z]:(\\[^\\/&?\n]+)\\?");
         pathTraverseHelper.initPathStarter("/upload");
-        pathTraverseHelper.validatePathString(path);
+        pathTraverseHelper.validatePathString(target.toString());
         byte[] bytes = Files.readAllBytes(target);
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + target.getFileName() + "\"")
