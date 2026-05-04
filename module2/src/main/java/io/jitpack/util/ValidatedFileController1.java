@@ -31,7 +31,15 @@ public class ValidatedFileController1 {
         if (!Files.exists(target) || !Files.isRegularFile(target)) {
             return ResponseEntity.notFound().build();
         }
-        validateFileName(path);
+        // test validation logic in a separate helper class
+        PathTraverseHelper pathTraverseHelper = new PathTraverseHelper();
+        pathTraverseHelper.initPathNameRule("[a-z]|[A-Z]:(\\[^\\/&?\n]+)\\?");
+        pathTraverseHelper.initPathStarter("/upload");
+        boolean result = pathTraverseHelper.validate(path);
+        if (!result) {
+            throw new IOException("Invalid path");
+        }
+
         byte[] bytes = Files.readAllBytes(target);
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + target.getFileName() + "\"")
@@ -47,7 +55,16 @@ public class ValidatedFileController1 {
         if (!Files.exists(target) || !Files.isRegularFile(target)) {
             return ResponseEntity.notFound().build();
         }
-        validateFileName(path);
+
+        // test validation logic in a separate helper class
+        PathTraverseHelper pathTraverseHelper = new PathTraverseHelper();
+        pathTraverseHelper.initPathNameRule("[a-z]|[A-Z]:(\\[^\\/&?\n]+)\\?");
+        pathTraverseHelper.initPathStarter("/upload");
+        boolean result = pathTraverseHelper.validate(path);
+        if (!result) {
+            throw new IOException("Invalid path");
+        }
+
         byte[] bytes = Files.readAllBytes(target);
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + target.getFileName() + "\"")
