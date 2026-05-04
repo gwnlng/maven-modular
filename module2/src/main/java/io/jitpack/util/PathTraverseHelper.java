@@ -40,20 +40,20 @@ public class PathTraverseHelper {
         this.pathStarter = normalizedStarter;
     }
 
-    public void validate(String path) throws IOException {
-        if (path == null || path.isBlank()) {
+    public void validate(Path path) throws IOException {
+        if (path == null || path.toString().isBlank()) {
             throw new IOException("Path is null or blank");
         }
 
-        if (path.contains("\0")) {
+        if (path.toString().contains("\0")) {
             throw new IOException("Path contains null byte");
         }
 
-        if (pathNameRule != null && !pathNameRule.matcher(path).matches()) {
+        if (pathNameRule != null && !pathNameRule.matcher(path.toString()).matches()) {
             throw new IOException("Path does not match name rule");
         }
 
-        Path requestedPath = Paths.get(path).normalize();
+        Path requestedPath = path.normalize();
         if (containsPathTraversal(requestedPath)) {
             throw new IOException("Path contains path traversal");
         }
