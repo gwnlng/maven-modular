@@ -53,7 +53,7 @@ public class ValidatedFileController1 {
             return ResponseEntity.notFound().build();
         }
 
-        validateFileName(path);
+        validateFileName(target.toString());
         byte[] bytes = Files.readAllBytes(target);
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + target.getFileName() + "\"")
