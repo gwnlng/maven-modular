@@ -67,6 +67,34 @@ public class PathTraverseHelper {
         }
     }
 
+    public void validatePathString(String pathString) throws IOException {
+        if (pathString == null || pathString.isBlank()) {
+            throw new IOException("Path is null or blank");
+        }
+
+        Path path = Paths.get(pathString);
+        if (path.toString().contains("\0")) {
+            throw new IOException("Path contains null byte");
+        }
+
+        if (pathNameRule != null && !pathNameRule.matcher(path.toString()).matches()) {
+            throw new IOException("Path does not match name rule");
+        }
+
+        Path requestedPath = path.normalize();
+        if (containsPathTraversal(requestedPath)) {
+            throw new IOException("Path contains path traversal");
+        }
+
+        if (pathStarter != null && !startsWithStarter(requestedPath, pathStarter)) {
+            throw new IOException("Path does not start with required prefix");
+        }
+
+        if (!Files.exists(requestedPath) || !Files.isRegularFile(requestedPath)) {
+            throw new IOException("Path does not exist or is not a regular file");
+        }
+    }
+
     private boolean containsPathTraversal(Path normalizedPath) {
         for (Path part : normalizedPath) {
             if ("..".equals(part.toString())) {

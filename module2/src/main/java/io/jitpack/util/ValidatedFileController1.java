@@ -53,7 +53,11 @@ public class ValidatedFileController1 {
             return ResponseEntity.notFound().build();
         }
 
-        validateFileName(target.toString());
+        // test validation logic in a separate helper class
+        PathTraverseHelper pathTraverseHelper = new PathTraverseHelper();
+        pathTraverseHelper.initPathNameRule("[a-z]|[A-Z]:(\\[^\\/&?\n]+)\\?");
+        pathTraverseHelper.initPathStarter("/upload");
+        pathTraverseHelper.validatePathString(path);
         byte[] bytes = Files.readAllBytes(target);
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + target.getFileName() + "\"")
