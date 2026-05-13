@@ -2,7 +2,11 @@ package io.jitpack.validator;
 
 import io.jitpack.util.SqlSanitizer;
 import io.jitpack.util.ValidatedFileController1;
+import io.jitpack.util.ValidatedFileController2;
+
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -38,6 +42,11 @@ public class App {
       ValidatedFileController1 controller = new ValidatedFileController1();
       controller.validateFileName(filePath);
       System.out.println("validated input path: " + filePath);
+
+      // test path traversal validation logic within same class
+      ValidatedFileController2 controller2 = new ValidatedFileController2();
+      Path filePathObj = Paths.get(filePath);
+      controller2.validateFilePath(filePathObj);
     } catch (IOException e) {
       System.err.println("Path validation failed: " + e.getMessage());
     } catch (SQLException e) {
