@@ -35,7 +35,7 @@ public class ValidatedFileController2 {
         }
 
         // test validation logic within class
-        this.validateFilePath(target);
+        validateFilePath(target);
         byte[] bytes = Files.readAllBytes(target);
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + target.getFileName() + "\"")
