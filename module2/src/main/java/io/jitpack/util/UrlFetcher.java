@@ -6,6 +6,7 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
 import java.util.Set;
+import io.jitpack.helper.UrlHelper;
 
 public class UrlFetcher {
     // Only allow explicit, trusted domains
@@ -49,10 +50,7 @@ public class UrlFetcher {
     public static String requireSafe(String targetUrl) {
         StringBuilder result = new StringBuilder();
         try {
-            // DANGER: Directly passing user input into the URL object
-            if (!isValidUrl(targetUrl)) {
-                throw new IllegalArgumentException("Invalid URL");
-            }
+            targetUrl = UrlHelper.validateSafeUrl(targetUrl);
             URL url = new URL(targetUrl);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
