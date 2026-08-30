@@ -16,7 +16,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import io.jitpack.helper.UrlHelper;
 
 @RestController
 @RequestMapping("/get-link-content")
@@ -25,9 +24,8 @@ public class UrlContentController {
     private static final Logger logger = LoggerFactory.getLogger(UrlContentController.class);
 
     @GetMapping("/fetch")
-    public ResponseEntity<Resource> fetchUrlContent(@RequestParam("url") String url) {
-        logger.warn("Fetching content from URL: {}", url);
-        url = UrlHelper.validateSafeUrl(url);
+    public ResponseEntity<Resource> fetchUrlContent(@RequestParam("url") String url) throws IOException {
+        logger.warn("Fetching content from URL: {}", url.replaceAll("[\r\n]", "_"));
         String content = UrlFetcher.requireSafe(url);
         byte[] bytes = content.getBytes();
         return ResponseEntity.ok()
